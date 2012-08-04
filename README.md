@@ -2,11 +2,16 @@
 are too big to be loaded at once with Nokogiri or other parser. It is based on
 external SAX implementation.
 
-This piece of code builds `links` map out of html document that contains arrays
-of anchor texts related to each link.
+DSL instructing `sxrb` how to treat encountered entities is very similar to one
+that would be usually used to build parsed document, which makes it very easy
+to represent business logic behind the code.
+
+Given `html` variable containing string with any webpage code this piece of
+code builds `links` Hash that contains arrays of anchor texts related to each
+link.
 
 ```ruby
-links = Hash.new {[]}
+links = Hash.new {|h,k| h[k] = []}
 
 SXRB::Parser.new(html) do |html|
   html.child 'body' do |body|
