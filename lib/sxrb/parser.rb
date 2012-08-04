@@ -9,14 +9,18 @@ module SXRB
 
       # Build rules tree
 
-      rules_tree = Proxy.new.tap do |proxy|
-	block.call(proxy)
+      rules_tree = CallbackTreeNode.new.tap do |node|
+        block.call(Proxy.new(node))
       end
 
+      # Create parser according to options
+
       parser = case options[:mode]
-	       when :string
-		 LibXML::XML::SaxParser.string(input)
-	       end
+               when :string
+                 LibXML::XML::SaxParser.string(input)
+               end
+
+      # Go!
 
       parser.callbacks = Callbacks.new(rules_tree)
       parser.parse

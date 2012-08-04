@@ -13,9 +13,9 @@ describe SXRB::Parser do
       handler.should_receive(:msg).once
 
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
-	xml.child 'testelement' do |testelement|
-	  handler.msg
-	end
+        xml.child 'testelement' do |testelement|
+          handler.msg
+        end
       end
     end
   end
@@ -26,11 +26,11 @@ describe SXRB::Parser do
       handler.should_receive(:msg).once
 
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
-	xml.child 'testelement' do |testelement|
-	  testelement.on_whole_element do |attrs, value|
-	    handler.msg
-	  end
-	end
+        xml.child 'testelement' do |testelement|
+          testelement.on_whole_element do |attrs, value|
+            handler.msg
+          end
+        end
       end
     end
   end
