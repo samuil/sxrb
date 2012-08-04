@@ -5,9 +5,9 @@ module SXRB
     end
 
     def child(*args, &block)
-      options = args.pop if args.last.is_a? Hash
+      options = args.last.is_a?(Hash) ? args.pop : {}
       args.each do |tag|
-        @callbacks.add(tag).tap do |proxy|
+        @callbacks.add(tag, options).tap do |proxy|
           block.call(proxy)
         end
       end

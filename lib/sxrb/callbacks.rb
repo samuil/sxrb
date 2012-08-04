@@ -19,6 +19,23 @@ module SXRB
       end
     end
 
+    def on_characters(chars)
+      case @callback_node.content_mode
+      when :array
+        @document_stack.last.value ||= []
+        @document_stack.last.value.tap do |ary|
+          if ary.last.is_a? String
+            ary.last << chars
+          else
+            ary << chars
+          end
+        end
+      when :string
+        @document_stack.last.value ||= ""
+        @document_stack.last.value << chars
+      end
+    end
+
     def on_end_element_ns(name, prefix, uri)
       @document_stack.pop.tap do |node|
         raise SXRB::TagMismatchError if node.name != name

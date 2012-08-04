@@ -1,19 +1,28 @@
 module SXRB
   class CallbackTreeNode
-    attr_reader :children, :parent
+    attr_reader :children, :parent, :content_mode
     attr_writer :on_whole_element
 
     def initialize(options = {})
-      @parent = options[:parent]
+      set_options options
       @children = Hash.new {|h,k| h[k] = CallbackTreeNode.new(:parent => self)}
     end
 
-    def add(tag)
-      Proxy.new(@children[tag])
+    def set_options(options)
+      @content_mode = options[:content]
+      @parent = options[:parent]
+    end
+
+    def add(tag, options)
+      Proxy.new(
+        @children[tag].tap do |callback_tree_node|
+          callback_tree_node.set_options options
+        end
+      )
     end
 
     def on_whole_element(node)
-      @on_whole_element.call(node) if @on_whole_element
+      @on_whole_element.call(node.attributes, node.value) if @on_whole_element
     end
   end
 end
