@@ -1,2 +1,4 @@
-module SXRB
-end
+require 'sxrb/parser'
+require 'sxrb/errors'
+
+module SXRB; end
