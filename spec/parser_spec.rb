@@ -51,5 +51,25 @@ describe SXRB::Parser do
       end
     end
 
+    it 'should not find element with non-matching name' do
+      SXRB::Parser.new("<testelement>content</testelement>") do |xml|
+        xml.child 'othername', :content => :string do |test_element|
+          test_element.on_whole_element do |attrs, value|
+            value.should == 'content'
+          end
+        end
+      end
+    end
+
+    it 'should find element by regexp' do
+      SXRB::Parser.new("<testelement>content</testelement>") do |xml|
+        xml.child /testel/, :content => :string do |test_element|
+          test_element.on_whole_element do |attrs, value|
+            value.should == 'content'
+          end
+        end
+      end
+    end
+
   end
 end

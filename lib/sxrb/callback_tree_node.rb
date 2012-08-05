@@ -24,5 +24,11 @@ module SXRB
     def on_whole_element(node)
       @on_whole_element.call(node.attributes, node.value) if @on_whole_element
     end
+
+    def child(name)
+      @children.find {|k,v| k === name}.tap do |key, value|
+        return value
+      end
+    end
   end
 end

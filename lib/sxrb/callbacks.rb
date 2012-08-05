@@ -12,14 +12,21 @@ module SXRB
       @document_stack = []
     end
 
+    def if_callback_present
+      yield if @callback_node
+    end
+
     def on_start_element_ns(name, attributes, prefix, uri, namespaces)
-      @callback_node = @callback_node.children[name]
+      if_callback_present do
+        @callback_node = @callback_node.child(name)
+      end
       Node.new(name, attributes, prefix, uri, namespaces).tap do |node|
         @document_stack.push(node)
       end
     end
 
     def on_characters(chars)
+      return unless @callback_node
       case @callback_node.content_mode
       when :array
         @document_stack.last.value ||= []
@@ -39,9 +46,13 @@ module SXRB
     def on_end_element_ns(name, prefix, uri)
       @document_stack.pop.tap do |node|
         raise SXRB::TagMismatchError if node.name != name
-        @callback_node.on_whole_element(node)
+        if_callback_present do
+          @callback_node.on_whole_element(node)
+        end
       end
-      @callback_node = @callback_node.parent
+      if_callback_present do
+        @callback_node = @callback_node.parent
+      end
     end
   end
 end
