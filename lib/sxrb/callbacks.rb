@@ -58,11 +58,10 @@ module SXRB
     # options:
     #   recursive
     #
-    def add_rule(rule, rule_path, opts)
-      options = {:recursive => false}.merge opts
-      operator = options[:recursive] ? ' ' : '.*'
+    def add_rule(rule, rule_path, options)
+      operator = options[:recursive] ? '.*' : ' '
       new_rule = rule_path + operator + rule
-      new_rule
+      new_rule.strip
     end
 
     private

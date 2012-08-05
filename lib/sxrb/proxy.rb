@@ -6,18 +6,16 @@ module SXRB
     end
 
     def child(*args, &block)
-      options = {:recursive => false}.merge(args.last.is_a?(Hash) ? args.pop : {})
       args.each do |tag|
-        @callback_tree.add_rule(tag, @current_path, options).tap do |new_path|
+        @callback_tree.add_rule(tag, @current_path, :recursive => false).tap do |new_path|
           block.call(Proxy.new(@callback_tree, new_path))
         end
       end
     end
 
-    def descentant(*args, &block)
-      options = {:recursive => true}.merge(args.last.is_a?(Hash) ? args.pop : {})
+    def descendant(*args, &block)
       args.each do |tag|
-        @callback_tree.add_rule(tag, @current_path, options).tap do |new_path|
+        @callback_tree.add_rule(tag, @current_path, :recursive => true).tap do |new_path|
           block.call(Proxy.new(@callback_tree, new_path))
         end
       end
