@@ -7,12 +7,6 @@ module SXRB
       raise ArgumentError.new("Block expected") if block.nil?
       options = {:mode => :string}.merge(opts)
 
-      # Build rules tree
-
-      rules_tree = CallbackTreeNode.new.tap do |node|
-        block.call(Proxy.new(node))
-      end
-
       # Create parser according to options
 
       parser = case options[:mode]
@@ -20,9 +14,11 @@ module SXRB
                  LibXML::XML::SaxParser.string(input)
                end
 
-      # Go!
+      callbacks = Callbacks.new.tap do |cb|
+        yield Proxy.new(cb)
+      end
 
-      parser.callbacks = Callbacks.new(rules_tree)
+      parser.callbacks = callbacks
       parser.parse
     end
   end
