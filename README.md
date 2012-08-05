@@ -12,6 +12,10 @@ to represent business logic behind the code.
 With `SXRB` one can write readable code that handles XML data, which later runs
 fast and has low memory usage. DSL combines SAX robustness with DOM simplicity.
 
+For quick start install `SXRB` with:
+
+    gem install sxrb
+
 Few examples
 =============
 
