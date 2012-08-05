@@ -9,8 +9,8 @@ module SXRB
     end
 
     def set_options(options)
-      @content_mode = options[:content]
-      @parent = options[:parent]
+      @content_mode = options[:content_mode] || @content_mode || :string
+      @parent ||= options[:parent]
     end
 
     def add(tag, options)

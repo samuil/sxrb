@@ -33,7 +33,7 @@ describe SXRB::Parser do
 
     it 'should pass value properly to callback in array mode' do
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
-        xml.child 'testelement', :content => :array do |test_element|
+        xml.child 'testelement', :content_mode => :array do |test_element|
           test_element.on_whole_element do |attrs, value|
             value.should == ['content']
           end
@@ -43,7 +43,7 @@ describe SXRB::Parser do
 
     it 'should pass value properly to callback in string mode' do
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
-        xml.child 'testelement', :content => :string do |test_element|
+        xml.child 'testelement', :content_mode => :string do |test_element|
           test_element.on_whole_element do |attrs, value|
             value.should == 'content'
           end
@@ -53,7 +53,7 @@ describe SXRB::Parser do
 
     it 'should not find element with non-matching name' do
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
-        xml.child 'othername', :content => :string do |test_element|
+        xml.child 'othername', :content_mode => :string do |test_element|
           test_element.on_whole_element do |attrs, value|
             value.should == 'content'
           end
@@ -63,9 +63,21 @@ describe SXRB::Parser do
 
     it 'should find element by regexp' do
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
-        xml.child /testel/, :content => :string do |test_element|
+        xml.child /testel/, :content_mode => :string do |test_element|
           test_element.on_whole_element do |attrs, value|
             value.should == 'content'
+          end
+        end
+      end
+    end
+
+    it 'should find nested element' do
+      SXRB::Parser.new("<testelement><a>a-content</a></testelement>") do |xml|
+        xml.child 'testelement' do |test_element|
+          test_element.child 'a', :mode => :string do |a|
+            a.on_whole_element do |attrs, value|
+              value.should == 'a-content'
+            end
           end
         end
       end
