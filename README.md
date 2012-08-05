@@ -16,6 +16,8 @@ For quick start install `SXRB` with:
 
     gem install sxrb
 
+[![Build Status](https://secure.travis-ci.org/samuil/sxrb.png)](http://travis-ci.org/samuil/sxrb)
+
 Few examples
 =============
 
