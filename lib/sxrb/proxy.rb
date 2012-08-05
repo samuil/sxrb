@@ -27,11 +27,15 @@ module SXRB
       @callback_tree.add_callback(:element, @current_path, &block)
     end
 
-    def on_element_start(&block)
+    def on_start(&block)
       @callback_tree.add_callback(:start, @current_path, &block)
     end
 
-    def on_element_end(&block)
+    def on_characters(&block)
+      @callback_tree.add_callback(:characters, @current_path, &block)
+    end
+
+    def on_end(&block)
       @callback_tree.add_callback(:end, @current_path, &block)
     end
 

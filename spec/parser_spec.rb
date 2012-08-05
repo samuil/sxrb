@@ -8,7 +8,47 @@ describe SXRB::Parser do
   end
 
   context 'callbacks' do
-    it 'should call defined callback for child element' do
+    it 'should call defined start callback for child element' do
+      handler = double('handler')
+      handler.should_receive(:msg).once
+
+      SXRB::Parser.new("<testelement>content</testelement>") do |xml|
+        xml.child 'testelement' do |test_element|
+          test_element.on_start do |element|
+            handler.msg
+          end
+        end
+      end
+    end
+
+    it 'should call defined end callback for child element' do
+      handler = double('handler')
+      handler.should_receive(:msg).once
+
+      SXRB::Parser.new("<testelement>content</testelement>") do |xml|
+        xml.child 'testelement' do |test_element|
+          test_element.on_end do |element|
+            handler.msg
+          end
+        end
+      end
+    end
+
+    it 'should call defined characters callback for child element' do
+      handler = double('handler')
+      handler.should_receive(:msg).once
+
+      SXRB::Parser.new("<testelement>content</testelement>") do |xml|
+        xml.child 'testelement' do |test_element|
+          test_element.on_characters do |element|
+            handler.msg
+          end
+        end
+      end
+    end
+
+
+    it 'should call defined element callback for child element' do
       handler = double('handler')
       handler.should_receive(:msg).once
 

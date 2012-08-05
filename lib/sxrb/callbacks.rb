@@ -27,11 +27,11 @@ module SXRB
         @stack.last.append_text chars
       else
         TextNode.new(chars).tap do |node|
+          invoke_callback(:characters, node)
           @stack.push node
           @current_element.append node if @current_element
         end
       end
-      invoke_callback(:characters, chars)
     end
 
     def on_end_element_ns(name, prefix, uri)
@@ -42,14 +42,14 @@ module SXRB
         @current_element = @current_element.parent
       end
 
+      invoke_callback(:end, @stack.last)
       @stack.pop.tap do |node|
         raise SXRB::TagMismatchError if node.name != name
-        invoke_callback(:end, node)
       end
     end
 
     def add_callback(type, rule_path, &block)
-      @rules_map[Regexp.new "#{rule_path}$"].tap do |rules|
+      @rules_map[Regexp.new "^#{rule_path}$"].tap do |rules|
         rules.rules[type] = block
         rules.recursive = (type == :element) # true / false
       end
