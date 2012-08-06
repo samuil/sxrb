@@ -12,6 +12,10 @@ module SXRB
       parser = case options[:mode]
                when :string
                  LibXML::XML::SaxParser.string(input)
+               when :file
+                 LibXML::XML::SaxParser.string(input)
+               when :io
+                 LibXML::XML::SaxParser.string(input)
                end
 
       callbacks = Callbacks.new.tap do |cb|
