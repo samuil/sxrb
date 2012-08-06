@@ -13,9 +13,9 @@ module SXRB
                when :string
                  LibXML::XML::SaxParser.string(input)
                when :file
-                 LibXML::XML::SaxParser.string(input)
+                 LibXML::XML::SaxParser.file(input)
                when :io
-                 LibXML::XML::SaxParser.string(input)
+                 LibXML::XML::SaxParser.io(input)
                end
 
       callbacks = Callbacks.new.tap do |cb|
