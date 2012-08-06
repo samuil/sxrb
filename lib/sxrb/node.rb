@@ -10,5 +10,9 @@ module SXRB
       node.parent = self
       @children << node
     end
+
+    def content
+      children.map {|child| child.is_a?(TextNode)? child.text : child.content}.flatten.join('')
+    end
   end
 end
