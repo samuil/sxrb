@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'sxrb'
-  s.version     = '0.2.0'
+  s.version     = '0.2.1'
   s.date        = '2012-08-06'
   s.summary     = "Smart XML parser"
   s.description = "Robust XML parser that allows defining desired behavior with fancy DSL"
