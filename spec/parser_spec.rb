@@ -1,14 +1,28 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe SXRB::Parser do
-  it 'should fail when created without block' do
-    expect {
-      SXRB::Parser.new("<xmlstring/>")
-    }.to raise_error(ArgumentError)
+  context 'constructors' do
+    it 'should fail when created without block' do
+      expect {
+	SXRB::Parser.new("<xmlstring/>")
+      }.to raise_error(ArgumentError)
+    end
+
+    it 'defined rules should be reusable' do
+      @handler = double('handler')
+      @handler.should_receive(:msg).twice
+      rules = SXRB::Parser.define_rules do |root|
+	root.child("el") do |el|
+	  el.on_element {@handler.msg}
+	end
+      end
+      SXRB::Parser.parse_string('<el></el>', rules)
+      SXRB::Parser.parse_string('<el></el>', rules)
+    end
   end
 
   context 'matchers' do
-    before do
+    before(:each) do
       @handler = double('handler')
     end
 
