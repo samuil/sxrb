@@ -1,13 +1,5 @@
 About
 =====
-`SXRB` is gem in early development stage (currently released version is 0.2.2)
-which is designed for easy and fast XML parsing. It is not yet
-production-ready, because of still a bit unstable API (verisoning convention is
-maintained though -- minor upgrades don't break compatibility). I'm planning to
-end wild development, stabilize API and have full test suite with version 1.0.0.
-
-Rationale
-=========
 
 `SXRB` aims to provide nice DSL for ruby developers to cope with XML files that
 are too big to be loaded at once with Nokogiri or other parser. It is based on
@@ -37,13 +29,23 @@ code builds `links` Hash that contains arrays of anchor texts related to each
 link.
 
 ```ruby
+require 'sxrb'
+
+html = <<-HTML
+<html>
+  <body>
+    <a href="https://github.com/samuil/sxrb">SXRB</a>
+  </body>
+</html>
+HTML
+
 links = Hash.new {|h,k| h[k] = []}
 
 SXRB::Parser.new(html) do |html|
-  html.child 'body' do |body|
+  html.descendant 'body' do |body|
     body.descendant 'a' do |a|
       a.on_element do |element|
-        links[attrs[:href]] << element.children.first.text
+        links[element.attributes['href']] << element.content
       end
     end
   end
@@ -77,3 +79,16 @@ parser treats incoming data when matching element is encountered. All events
 within this element are used to build small DOM-like structure, which is more
 comfortable than typical series of events. Please note that without additional
 memory usage you can define nested `on_element` blocks.
+
+Disclaimer
+==========
+
+`SXRB` is in early development stage (currently released version is 0.2.2). It is not yet
+production-ready, because of a bit unstable API (versioning convention is
+maintained though -- minor upgrades don't break compatibility). I'm planning to
+end wild development, stabilize API and have full test suite with version 1.0.0.
+
+License
+=======
+
+`SXRB` is distributed under MIT license (see LICENSE for details).
