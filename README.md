@@ -1,3 +1,11 @@
+About
+=====
+`SXRB` is gem in early development stage (currently released version is 0.2.2)
+which is designed for easy and fast XML parsing. It is not yet
+production-ready, because of still a bit unstable API (verisoning convention is
+maintained though -- minor upgrades don't break compatibility). I'm planning to
+end wild development, stabilize API and have full test suite with version 1.0.0.
+
 Rationale
 =========
 
