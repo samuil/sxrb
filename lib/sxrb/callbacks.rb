@@ -2,17 +2,25 @@ require 'libxml'
 require 'sxrb/node'
 require 'sxrb/text_node'
 
-# This class provides callbacks for SAX API which are configured with sxrb DSL.
 
 module SXRB
+
+  # This class provides callbacks for SAX API which are configured with sxrb
+  # DSL. It's behavior is configured by DSL via Proxy class objects, and should
+  # not be used outside of this scope. Currently it has only been tested with
+  # LibXML implementation of SAX, but set of method that object needs to
+  # provide is defined by standard, so using it with different backend should
+  # be automatic.
   class Callbacks
     #include LibXML::XML::SaxParser::VerboseCallbacks
     include LibXML::XML::SaxParser::Callbacks
+    # @api private
     def initialize
       @stack = []
       @rules_map = Hash.new {|h,k| h[k] = Rules.new}
     end
 
+    # @api private
     def on_start_element_ns(name, attributes, prefix, uri, namespaces)
       Node.new(name, attributes, prefix, uri, namespaces).tap do |node|
         @stack.push(node)
@@ -22,6 +30,7 @@ module SXRB
       end
     end
 
+    # @api private
     def on_characters(chars)
       if @stack.last.is_a? TextNode
         @stack.last.append_text chars
@@ -34,6 +43,7 @@ module SXRB
       end
     end
 
+    # @api private
     def on_end_element_ns(name, prefix, uri)
       @stack.pop if @stack.last.is_a? TextNode
 
@@ -48,6 +58,7 @@ module SXRB
       end
     end
 
+    # @api private
     def add_callback(type, rule_path, &block)
       @rules_map[Regexp.new "^#{rule_path}$"].tap do |rules|
         rules.rules[type] = block
@@ -55,9 +66,7 @@ module SXRB
       end
     end
 
-    # options:
-    #   recursive
-    #
+    # @api private
     def add_rule(rule, rule_path, options)
       operator = options[:recursive] ? '.*' : ' '
       new_rule = rule_path + operator + rule
@@ -66,23 +75,28 @@ module SXRB
 
     private
 
+    # @api private
     def invoke_callback(type, *args)
       current_matching_rules.
         map {|value| value.rules[type]}.
         compact.each {|callback| callback.call(*args)}
     end
 
+    # @api private
     def current_matching_rules
       @rules_map.each_pair.
         select {|rule, value| current_rule_path =~ rule}.
         map {|rule, value| value}
     end
 
+    # @api private
     def current_rule_path
       @stack.map(&:name).join(' ')
     end
   end
 
+  # Internal class that is designed to keep rules of matching XML elements.
+  # @api private
   class Rules
     attr_accessor :rules, :recursive
     def initialize
