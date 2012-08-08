@@ -1,0 +1,14 @@
+08 Aug 2012 (ver. 0.3.0)
+  * New constructors are available
+  * Parsing rules can be now reused
+  * YARD Documentation
+
+07 Aug 2012 (ver. 0.2.2)
+  * Fixed gem dependencies
+
+06 Aug 2012 (ver. 0.2.0)
+  * Added file and IO inputs support
+  * Project is now continously tested with Travis
+
+05 Aug 2012 (ver. 0.1.0)
+  * Release!

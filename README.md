@@ -83,7 +83,7 @@ memory usage you can define nested `on_element` blocks.
 Disclaimer
 ==========
 
-`SXRB` is in early development stage (currently released version is 0.2.2). It is not yet
+`SXRB` is in early development stage (currently released version is 0.3.0). It is not yet
 production-ready, because of a bit unstable API (versioning convention is
 maintained though -- minor upgrades don't break compatibility). I'm planning to
 end wild development, stabilize API and have full test suite with version 1.0.0.
