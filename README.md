@@ -80,6 +80,13 @@ within this element are used to build small DOM-like structure, which is more
 comfortable than typical series of events. Please note that without additional
 memory usage you can define nested `on_element` blocks.
 
+Resources
+=========
+
+* [Latest SXRB gem build](http://rubygems.org/gems/sxrb) at rubygems.org
+* [SXRB documentation](http://rubydoc.info/github/samuil/sxrb/master/frames) at yard
+* [Browse SXRB code](http://github.com/samuil/sxrb) at github
+
 Disclaimer
 ==========
 
