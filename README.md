@@ -87,6 +87,14 @@ Resources
 * [SXRB documentation](http://rubydoc.info/github/samuil/sxrb/master/frames) at yard
 * [Browse SXRB code](http://github.com/samuil/sxrb) at github
 
+Future plans
+============
+
+Right now `SXRB` is using LibXML implementation of SAX. Next important step
+(and probably last before 1.0.0) is integration with other backends (REXML,
+Nokogiri). It would also be nice to test current code against xml using
+namespaces.
+
 Disclaimer
 ==========
 
