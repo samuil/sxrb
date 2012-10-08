@@ -4,7 +4,7 @@ describe SXRB::Parser do
   context 'constructors' do
     it 'should fail when created without block' do
       expect {
-	SXRB::Parser.new("<xmlstring/>")
+        SXRB::Parser.new("<xmlstring/>")
       }.to raise_error(ArgumentError)
     end
 
@@ -12,9 +12,9 @@ describe SXRB::Parser do
       @handler = double('handler')
       @handler.should_receive(:msg).twice
       rules = SXRB::Parser.define_rules do |root|
-	root.child("el") do |el|
-	  el.on_element {@handler.msg}
-	end
+        root.child("el") do |el|
+          el.on_element {@handler.msg}
+        end
       end
       SXRB::Parser.parse_string('<el></el>', rules)
       SXRB::Parser.parse_string('<el></el>', rules)
@@ -52,7 +52,6 @@ describe SXRB::Parser do
         end
       end
     end
-
 
     it 'should call defined element callback for child element' do
       @handler.should_receive(:msg).once
@@ -99,6 +98,17 @@ describe SXRB::Parser do
       end
     end
 
+    it 'should invoke callback for nested child' do
+      @handler.should_receive(:msg)
+      SXRB::Parser.new("<testelement><a>a-content</a></testelement>") do |xml|
+        xml.child 'testelement' do |testelement|
+          testelement.child 'a' do |a|
+            a.on_element {@handler.msg}
+          end
+        end
+      end
+    end
+
     it 'should not find element with non-matching name' do
       @handler.should_not_receive(:msg)
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
@@ -116,10 +126,20 @@ describe SXRB::Parser do
         end
       end
     end
+
+    context 'css' do
+      it 'should find direct descendant' do
+        pending "feature not ready yet"
+        SXRB::Parser.new("<testelement><a>content<a></testelement>") do |xml|
+          xml.css "testelement > a" do |test_element|
+            test_element.on_element {@handler.msg}
+          end
+        end
+      end
+    end
   end
 
   context 'passed values' do
-
     it 'should pass empty hash to callback when no attributes are given' do
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
         xml.child 'testelement' do |test_element|

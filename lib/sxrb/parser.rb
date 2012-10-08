@@ -50,8 +50,8 @@ module SXRB
     def self.parse_string(string, callbacks = nil, &block)
       raise ArgumentError unless !!callbacks ^ !!block
       LibXML::XML::SaxParser.string(string).tap do |parser|
-	parser.callbacks = callbacks || define_rules(&block)
-	parser.parse
+        parser.callbacks = callbacks || define_rules(&block)
+        parser.parse
       end
       nil
     end
@@ -67,8 +67,8 @@ module SXRB
     def self.parse_file(filename, callbacks = nil, &block)
       raise ArgumentError unless !!callbacks ^ !!block
       LibXML::XML::SaxParser.file(filename).tap do |parser|
-	parser.callbacks = callbacks || define_rules(&block)
-	parser.parse
+        parser.callbacks = callbacks || define_rules(&block)
+        parser.parse
       end
     end
 
@@ -83,8 +83,8 @@ module SXRB
     def self.parse_io(io, callbacks = nil, &block)
       raise ArgumentError unless !!callbacks ^ !!block
       LibXML::XML::SaxParser.io(io).tap do |parser|
-	parser.callbacks = callbacks || define_rules(&block)
-	parser.parse
+        parser.callbacks = callbacks || define_rules(&block)
+        parser.parse
       end
     end
   end

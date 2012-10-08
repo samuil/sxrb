@@ -1,6 +1,7 @@
 require 'libxml'
 require 'sxrb/node'
 require 'sxrb/text_node'
+require 'sxrb/rule_tree'
 
 
 module SXRB
