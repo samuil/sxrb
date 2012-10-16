@@ -8,7 +8,7 @@ describe SXRB::Parser do
       }.to raise_error(ArgumentError)
     end
 
-    it 'defined rules should be reusable' do
+    it 'should allow reusing defined rules' do
       @handler = double('handler')
       @handler.should_receive(:msg).twice
       rules = SXRB::Parser.define_rules do |root|
@@ -22,98 +22,96 @@ describe SXRB::Parser do
   end
 
   context 'matchers' do
-    before(:each) do
-      @handler = double('handler')
-    end
+    let(:probe) { lambda{} }
 
     it 'should call defined start callback for child element' do
-      @handler.should_receive(:msg).once
+      probe.should_receive(:call).once
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
         xml.child 'testelement' do |test_element|
-          test_element.on_start {@handler.msg}
+          test_element.on_start(&probe)
         end
       end
     end
 
     it 'should call defined end callback for child element' do
-      @handler.should_receive(:msg).once
+      probe.should_receive(:call).once
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
         xml.child 'testelement' do |test_element|
-          test_element.on_end {@handler.msg}
+          test_element.on_end(&probe)
         end
       end
     end
 
     it 'should call defined characters callback for child element' do
-      @handler.should_receive(:msg).once
+      probe.should_receive(:call).once
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
         xml.child 'testelement' do |test_element|
-          test_element.on_characters {@handler.msg}
+          test_element.on_characters(&probe)
         end
       end
     end
 
     it 'should call defined element callback for child element' do
-      @handler.should_receive(:msg).once
+      probe.should_receive(:call).once
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
         xml.child 'testelement' do |test_element|
-          test_element.on_element {@handler.msg}
+          test_element.on_element(&probe)
         end
       end
     end
 
     it 'should call defined element callback for child element only' do
-      @handler.should_receive(:msg).once
+      probe.should_receive(:call).once
       SXRB::Parser.new("<testelement><testelement>content</testelement></testelement>") do |xml|
         xml.child 'testelement' do |test_element|
-          test_element.on_element {@handler.msg}
+          test_element.on_element(&probe)
         end
       end
     end
 
     it 'should call defined element callback for all descendants' do
-      @handler.should_receive(:msg).twice
+      probe.should_receive(:call).twice
       SXRB::Parser.new("<testelement><testelement>content</testelement></testelement>") do |xml|
         xml.descendant 'testelement' do |test_element|
-          test_element.on_element {@handler.msg}
+          test_element.on_element(&probe)
         end
       end
     end
 
     it 'should call callback for element regardless of nested elements' do
-      @handler.should_receive(:msg).once
+      probe.should_receive(:call).once
       SXRB::Parser.new("<testelement><a>a-content</a></testelement>") do |xml|
         xml.child 'testelement' do |test_element|
-          test_element.on_element {@handler.msg}
+          test_element.on_element(&probe)
         end
       end
     end
 
     it 'should not invoke callback for child which isn\'t direct descendant' do
-      @handler.should_not_receive(:msg)
+      probe.should_not_receive(:call)
       SXRB::Parser.new("<testelement><a>a-content</a></testelement>") do |xml|
         xml.child 'a' do |a|
-          a.on_element {@handler.msg}
+          a.on_element(&probe)
         end
       end
     end
 
     it 'should invoke callback for nested child' do
-      @handler.should_receive(:msg)
+      probe.should_receive(:call).once
       SXRB::Parser.new("<testelement><a>a-content</a></testelement>") do |xml|
         xml.child 'testelement' do |testelement|
           testelement.child 'a' do |a|
-            a.on_element {@handler.msg}
+            a.on_element(&probe)
           end
         end
       end
     end
 
     it 'should not find element with non-matching name' do
-      @handler.should_not_receive(:msg)
+      probe.should_not_receive(:call)
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
         xml.child 'othername' do |test_element|
-          test_element.on_element {@handler.msg}
+          test_element.on_element(&probe)
         end
       end
     end
@@ -122,7 +120,7 @@ describe SXRB::Parser do
       pending "feature not ready yet"
       SXRB::Parser.new("<testelement>content</testelement>") do |xml|
         xml.child /testel/ do |test_element|
-          test_element.on_element {@handler.msg}
+          test_element.on_element(&probe)
         end
       end
     end
@@ -132,7 +130,7 @@ describe SXRB::Parser do
         pending "feature not ready yet"
         SXRB::Parser.new("<testelement><a>content<a></testelement>") do |xml|
           xml.css "testelement > a" do |test_element|
-            test_element.on_element {@handler.msg}
+            test_element.on_element(&probe)
           end
         end
       end
