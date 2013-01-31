@@ -10,8 +10,7 @@ module SXRB
     #
     # @api private
     def initialize(callback_tree, current_path = '')
-      @callback_tree = callback_tree
-      @current_path = current_path
+      @callback_tree, @current_path = callback_tree, current_path
     end
 
     # Defines child (a direct descendant) of an element defined in current block.
@@ -27,11 +26,7 @@ module SXRB
     #
     # @todo Add Regexp and other selectors support in addition to Strings.
     def child(*tags, &block)
-      tags.each do |tag|
-        @callback_tree.add_rule(tag, @current_path, :recursive => false).tap do |new_path|
-          block.call(Proxy.new(@callback_tree, new_path))
-        end
-      end
+      define_node(:child, *tags, &block)
     end
 
     # Defines descendant of an element defined in current block.
@@ -47,11 +42,7 @@ module SXRB
     #
     # @todo Add Regexp and other selectors support in addition to strings.
     def descendant(*tags, &block)
-      tags.each do |tag|
-        @callback_tree.add_rule(tag, @current_path, :recursive => true).tap do |new_path|
-          block.call(Proxy.new(@callback_tree, new_path))
-        end
-      end
+      define_node(:descendant, *tags, &block)
     end
 
     # Defines callback method invoked when matching element is completely
@@ -68,7 +59,7 @@ module SXRB
     #   `on_element` should not be used for items that are expected to have
     #   large node subtrees.
     def on_element(&block)
-      @callback_tree.add_callback(:element, @current_path, &block)
+      add_callback_on(:element, &block)
     end
 
     # Defines a callback that is invoked whenever start tag is encountered.
@@ -80,7 +71,7 @@ module SXRB
     # @return [nil]
     # @api public
     def on_start(&block)
-      @callback_tree.add_callback(:start, @current_path, &block)
+      add_callback_on(:start, &block)
     end
 
     # Defines a callback that is invoked whenever anonymous text node within
@@ -93,7 +84,7 @@ module SXRB
     #
     # @api public
     def on_characters(&block)
-      @callback_tree.add_callback(:characters, @current_path, &block)
+      add_callback_on(:characters, &block)
     end
 
     # Defines a callback that is invoked whenever end tag is encountered.
@@ -105,8 +96,26 @@ module SXRB
     # @return [nil]
     # @api public
     def on_end(&block)
-      @callback_tree.add_callback(:end, @current_path, &block)
+      add_callback_on(:end, &block)
     end
-
+    
+    private
+    
+    def define_node(type, *tags, &block)
+      raise ArgumentError unless [:child, :descendant].include?(type)
+      
+      recursive = { child: false, descendant: true }[type]
+      
+      tags.each do |tag|
+        @callback_tree.add_rule(tag, @current_path, :recursive => recursive).tap do |new_path|
+          block.call(Proxy.new(@callback_tree, new_path))
+        end
+      end
+    end
+    
+    def add_callback_on(callback, &block)
+      raise ArgumentError unless [:element, :start, :characters, :end].include?(callback)
+      @callback_tree.add_callback(callback, @current_path, &block)
+    end
   end
 end
