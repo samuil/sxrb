@@ -104,7 +104,8 @@ module SXRB
     def define_node(type, *tags, &block)
       raise ArgumentError unless [:child, :descendant].include?(type)
       
-      recursive = { child: false, descendant: true }[type]
+      recursive = false if type == :child
+      recursive = true  if type == :descendant
       
       tags.each do |tag|
         @callback_tree.add_rule(tag, @current_path, :recursive => recursive).tap do |new_path|
