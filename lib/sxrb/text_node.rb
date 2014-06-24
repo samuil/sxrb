@@ -14,8 +14,6 @@ module SXRB
 
     # Accessor for text data kept in TextNode object.
     # @return [String]
-    def text
-      @text
-    end
+    attr_reader :text
   end
 end

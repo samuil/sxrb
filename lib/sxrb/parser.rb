@@ -48,11 +48,7 @@ module SXRB
     #   If callbacks parameter is not provided rules have to be defined directly in provided block.
     # @return [nil]
     def self.parse_string(string, callbacks = nil, &block)
-      raise ArgumentError unless !!callbacks ^ !!block
-      LibXML::XML::SaxParser.string(string).tap do |parser|
-	parser.callbacks = callbacks || define_rules(&block)
-	parser.parse
-      end
+      parse_from_source(:string, string, callbacks, &block)
       nil
     end
 
@@ -65,11 +61,7 @@ module SXRB
     #   If callbacks parameter is not provided rules have to be defined directly in provided block.
     # @return [nil]
     def self.parse_file(filename, callbacks = nil, &block)
-      raise ArgumentError unless !!callbacks ^ !!block
-      LibXML::XML::SaxParser.file(filename).tap do |parser|
-	parser.callbacks = callbacks || define_rules(&block)
-	parser.parse
-      end
+      parse_from_source(:file, filename, callbacks, &block)
     end
 
     # Parse IO containing XML.
@@ -81,10 +73,18 @@ module SXRB
     #   If callbacks parameter is not provided rules have to be defined directly in provided block.
     # @return [nil]
     def self.parse_io(io, callbacks = nil, &block)
+      parse_from_source(:io, io, callbacks, &block)
+    end
+    
+    private
+    
+    def self.parse_from_source(source_type, source, callbacks = nil, &block)
+      raise ArgumentError unless [:string, :file, :io].include?(source_type)
       raise ArgumentError unless !!callbacks ^ !!block
-      LibXML::XML::SaxParser.io(io).tap do |parser|
-	parser.callbacks = callbacks || define_rules(&block)
-	parser.parse
+      
+      LibXML::XML::SaxParser.send(source_type, source).tap do |parser|
+	      parser.callbacks = callbacks || define_rules(&block)
+        parser.parse
       end
     end
   end
